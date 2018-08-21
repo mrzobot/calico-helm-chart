@@ -17,3 +17,7 @@ helm install . --name=calico --namespace=kube-system
 If you need to reference tiller, just add --tiller-namespace=NamespaceWhereTillerIsInstalled
 
 
+
+# Notes
+
+This helm chart is really straight forward, however feel free to fork it or make changes. I'll see to make updates to values files and start disecting the yaml infrastructure within the template. 
