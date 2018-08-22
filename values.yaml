@@ -2,7 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-<<<<<<< HEAD
 # Daemonset Settings
 name: calico-node
 namespace: kube-system
@@ -39,10 +38,3 @@ env:
   FELIX_LOGSEVERITYSYS: none
   FELIX_PROMETHEUSMETRICSENABLED: true
   NO_DEFAULT_POOLS: true
-=======
-######################
-#
-# This is emtpy on purpose, if you feel like adding values for automation etc, please submit a PR
-#
-######################
->>>>>>> c57fb2e863d49bec0cb2465bced7ef8d66501854
