@@ -1,8 +1,8 @@
 kind: DaemonSet
 apiVersion: extensions/v1beta1
 metadata:
-  name: calico-node
-  namespace: kube-system
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
   labels:
     k8s-app: calico-node
 spec:
@@ -10,7 +10,7 @@ spec:
     matchLabels:
       k8s-app: calico-node
   updateStrategy:
-    type: RollingUpdate
+    type: {{ .Values.updateStrategy.type }}
     rollingUpdate:
       maxUnavailable: 1
   template:
@@ -24,53 +24,53 @@ spec:
         # if it ever gets evicted.
         scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
-      hostNetwork: true
-      serviceAccountName: calico-node
+      hostNetwork: {{ .Values.spec.hostNetwork }}
+      serviceAccountName: {{ .Values.spec.serviceAccountName }}
       # Minimize downtime during a rolling upgrade or deletion; tell Kubernetes to do a "force
       # deletion": https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods.
-      terminationGracePeriodSeconds: 0
+      terminationGracePeriodSeconds: {{ .Values.spec.terminationGracePeriodSeconds }}
       containers:
         # Runs calico/node container on each Kubernetes node.  This
         # container programs network policy and routes on each
         # host.
         - name: calico-node
-          image: quay.io/calico/node:v3.1.3
+          image: {{ .Values.image }}
           env:
             # Use Kubernetes API as the backing datastore.
             - name: DATASTORE_TYPE
-              value: "kubernetes"
+              value: {{ .Values.env.DATASTORE_TYPE | quote }}
             # Use eni not cali for interface prefix
             - name: FELIX_INTERFACEPREFIX
-              value: "eni"
+              value: {{ .Values.env.FELIX_INTERFACEPREFIX | quote }}
             # Enable felix info logging.
             - name: FELIX_LOGSEVERITYSCREEN
-              value: "info"
+              value: {{ .Values.env.FELIX_LOGSEVERITYSCREEN | quote }}
             # Don't enable BGP.
             - name: CALICO_NETWORKING_BACKEND
-              value: "none"
+              value: {{ .Values.env.CALICO_NETWORKING_BACKEND | quote }}
             # Cluster type to identify the deployment type
             - name: CLUSTER_TYPE
-              value: "k8s,ecs"
+              value: {{ .Values.env.CLUSTER_TYPE | quote }}
             # Disable file logging so `kubectl logs` works.
             - name: CALICO_DISABLE_FILE_LOGGING
-              value: "true"
+              value: {{ .Values.env.CALICO_DISABLE_FILE_LOGGING | quote }}
             - name: FELIX_TYPHAK8SSERVICENAME
-              value: "calico-typha"
+              value: {{ .Values.env.FELIX_TYPHAK8SSERVICENAME | quote }}
             # Set Felix endpoint to host default action to ACCEPT.
             - name: FELIX_DEFAULTENDPOINTTOHOSTACTION
-              value: "ACCEPT"
+              value: {{ .Values.env.FELIX_DEFAULTENDPOINTTOHOSTACTION | quote }}
             # Disable IPV6 on Kubernetes.
             - name: FELIX_IPV6SUPPORT
-              value: "false"
+              value: {{ .Values.env.FELIX_IPV6SUPPORT | quote }}
             # Wait for the datastore.
             - name: WAIT_FOR_DATASTORE
-              value: "true"
+              value: {{ .Values.env.WAIT_FOR_DATASTORE | quote }}
             - name: FELIX_LOGSEVERITYSYS
-              value: "none"
+              value: {{ .Values.env.FELIX_LOGSEVERITYSYS | quote }}
             - name: FELIX_PROMETHEUSMETRICSENABLED
-              value: "true"
+              value: {{ .Values.env.FELIX_PROMETHEUSMETRICSENABLED | quote }}
             - name: NO_DEFAULT_POOLS
-              value: "true"
+              value: {{ .Values.env.NO_DEFAULT_POOLS | quote }}
             # Set based on the k8s node name.
             - name: NODENAME
               valueFrom:
@@ -90,7 +90,7 @@ spec:
               host: localhost
             periodSeconds: 10
             initialDelaySeconds: 10
-            failureThreshold: 6
+            failureThreshold: {{ .Values.failureThreshold }}
           readinessProbe:
             httpGet:
               path: /readiness
