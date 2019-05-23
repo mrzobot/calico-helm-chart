@@ -25,6 +25,8 @@ spec:
         scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
       hostNetwork: {{ .Values.spec.hostNetwork }}
+      nodeSelector:
+        beta.kubernetes.io/os: linux
       serviceAccountName: {{ .Values.spec.serviceAccountName }}
       # Minimize downtime during a rolling upgrade or deletion; tell Kubernetes to do a "force
       # deletion": https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods.
@@ -34,7 +36,7 @@ spec:
         # container programs network policy and routes on each
         # host.
         - name: calico-node
-          image: {{ .Values.image }}
+          image: {{ .Values.image.node }}
           env:
             # Use Kubernetes API as the backing datastore.
             - name: DATASTORE_TYPE
@@ -59,6 +61,8 @@ spec:
             # Set Felix endpoint to host default action to ACCEPT.
             - name: FELIX_DEFAULTENDPOINTTOHOSTACTION
               value: {{ .Values.env.FELIX_DEFAULTENDPOINTTOHOSTACTION | quote }}
+            - name: FELIX_IPTABLESMANGLEALLOWACTION
+              value: {{ .Values.env.FELIX_IPTABLESMANGLEALLOWACTION | quote }}
             # Disable IPV6 on Kubernetes.
             - name: FELIX_IPV6SUPPORT
               value: {{ .Values.env.FELIX_IPV6SUPPORT | quote }}
@@ -92,16 +96,23 @@ spec:
             initialDelaySeconds: 10
             failureThreshold: {{ .Values.failureThreshold }}
           readinessProbe:
-            httpGet:
-              path: /readiness
-              port: 9099
+            exec:
+              command:
+              - /bin/calico-node
+              - -felix-ready
             periodSeconds: 10
           volumeMounts:
             - mountPath: /lib/modules
               name: lib-modules
               readOnly: true
+            - mountPath: /run/xtables.lock
+              name: xtables-lock
+              readOnly: false
             - mountPath: /var/run/calico
               name: var-run-calico
+              readOnly: false
+            - mountPath: /var/lib/calico
+              name: var-lib-calico
               readOnly: false
       volumes:
         # Used to ensure proper kmods are installed.
@@ -111,6 +122,17 @@ spec:
         - name: var-run-calico
           hostPath:
             path: /var/run/calico
+        - hostPath:
+            path: /var/lib/calico
+          name: var-lib-calico
+        - hostPath:
+            path: /run/xtables.lock
+            type: FileOrCreate
+          name: xtables-lock
       tolerations:
-        # Make sure calico/node gets scheduled on all nodes.
-      - operator: Exists
+      - effect: NoSchedule
+        operator: Exists
+      - key: CriticalAddonsOnly
+        operator: Exists
+      - effect: NoExecute
+        operator: Exists

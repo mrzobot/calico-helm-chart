@@ -13,14 +13,18 @@ spec:
       labels:
         k8s-app: calico-typha
       annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: 'true'
         scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
       tolerations:
-      - operator: Exists
+      - key: CriticalAddonsOnly
+        operator: Exists
       hostNetwork: true
       serviceAccountName: calico-node
+      nodeSelector:
+        beta.kubernetes.io/os: linux
       containers:
-      - image: quay.io/calico/typha:v0.7.4
+      - image: {{ .Values.image.typha }}
         name: calico-typha
         ports:
         - containerPort: 5473
@@ -48,26 +52,23 @@ spec:
             value: "1"
           - name: TYPHA_HEALTHENABLED
             value: "true"
-        volumeMounts:
-        - mountPath: /etc/calico
-          name: etc-calico
-          readOnly: true
+          - name: FELIX_IPTABLESMANGLEALLOWACTION
+            value: {{ .Values.env.FELIX_IPTABLESMANGLEALLOWACTION | quote }}
         livenessProbe:
-          httpGet:
-            path: /liveness
-            port: 9098
+          exec:
+            command:
+            - calico-typha
+            - check
+            - liveness
           periodSeconds: 30
           initialDelaySeconds: 30
         readinessProbe:
-          httpGet:
-            path: /readiness
-            port: 9098
+          exec:
+            command:
+            - calico-typha
+            - check
+            - readiness
           periodSeconds: 10
-      volumes:
-      - name: etc-calico
-        hostPath:
-          path: /etc/calico
-
 ---
 
 apiVersion: extensions/v1beta1
@@ -86,6 +87,8 @@ spec:
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
+      nodeSelector:
+        beta.kubernetes.io/os: linux
       containers:
         - image: k8s.gcr.io/cluster-proportional-autoscaler-amd64:1.1.2
           name: autoscaler

@@ -59,7 +59,10 @@ metadata:
 spec:
   scope: Cluster
   group: crd.projectcalico.org
-  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
   names:
     kind: HostEndpoint
     plural: hostendpoints
@@ -75,7 +78,10 @@ metadata:
 spec:
   scope: Cluster
   group: crd.projectcalico.org
-  version: v1
+  versions:
+    - name: v1
+      served: true
+      storage: true
   names:
     kind: ClusterInformation
     plural: clusterinformations
@@ -91,7 +97,11 @@ metadata:
 spec:
   scope: Cluster
   group: crd.projectcalico.org
-  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+
   names:
     kind: GlobalNetworkPolicy
     plural: globalnetworkpolicies
@@ -107,7 +117,10 @@ metadata:
 spec:
   scope: Cluster
   group: crd.projectcalico.org
-  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
   names:
     kind: GlobalNetworkSet
     plural: globalnetworksets
@@ -123,8 +136,26 @@ metadata:
 spec:
   scope: Namespaced
   group: crd.projectcalico.org
-  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
   names:
     kind: NetworkPolicy
     plural: networkpolicies
     singular: networkpolicy
+
+---
+
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: bgppeers.crd.projectcalico.org
+spec:
+  scope: Cluster
+  group: crd.projectcalico.org
+  version: v1
+  names:
+    kind: BGPPeer
+    plural: bgppeers
+    singular: bgppeer
