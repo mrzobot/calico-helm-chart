@@ -4,7 +4,6 @@
 # Calico policy-only mode.
 
 apiVersion: apiextensions.k8s.io/v1beta1
-description: Calico Felix Configuration
 kind: CustomResourceDefinition
 metadata:
    name: felixconfigurations.crd.projectcalico.org
@@ -20,7 +19,6 @@ spec:
 ---
 
 apiVersion: apiextensions.k8s.io/v1beta1
-description: Calico BGP Configuration
 kind: CustomResourceDefinition
 metadata:
   name: bgpconfigurations.crd.projectcalico.org
@@ -36,7 +34,6 @@ spec:
 ---
 
 apiVersion: apiextensions.k8s.io/v1beta1
-description: Calico IP Pools
 kind: CustomResourceDefinition
 metadata:
   name: ippools.crd.projectcalico.org
@@ -52,14 +49,16 @@ spec:
 ---
 
 apiVersion: apiextensions.k8s.io/v1beta1
-description: Calico Host Endpoints
 kind: CustomResourceDefinition
 metadata:
   name: hostendpoints.crd.projectcalico.org
 spec:
   scope: Cluster
   group: crd.projectcalico.org
-  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
   names:
     kind: HostEndpoint
     plural: hostendpoints
@@ -68,14 +67,16 @@ spec:
 ---
 
 apiVersion: apiextensions.k8s.io/v1beta1
-description: Calico Cluster Information
 kind: CustomResourceDefinition
 metadata:
   name: clusterinformations.crd.projectcalico.org
 spec:
   scope: Cluster
   group: crd.projectcalico.org
-  version: v1
+  versions:
+    - name: v1
+      served: true
+      storage: true
   names:
     kind: ClusterInformation
     plural: clusterinformations
@@ -84,14 +85,17 @@ spec:
 ---
 
 apiVersion: apiextensions.k8s.io/v1beta1
-description: Calico Global Network Policies
 kind: CustomResourceDefinition
 metadata:
   name: globalnetworkpolicies.crd.projectcalico.org
 spec:
   scope: Cluster
   group: crd.projectcalico.org
-  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+
   names:
     kind: GlobalNetworkPolicy
     plural: globalnetworkpolicies
@@ -100,14 +104,16 @@ spec:
 ---
 
 apiVersion: apiextensions.k8s.io/v1beta1
-description: Calico Global Network Sets
 kind: CustomResourceDefinition
 metadata:
   name: globalnetworksets.crd.projectcalico.org
 spec:
   scope: Cluster
   group: crd.projectcalico.org
-  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
   names:
     kind: GlobalNetworkSet
     plural: globalnetworksets
@@ -116,15 +122,32 @@ spec:
 ---
 
 apiVersion: apiextensions.k8s.io/v1beta1
-description: Calico Network Policies
 kind: CustomResourceDefinition
 metadata:
   name: networkpolicies.crd.projectcalico.org
 spec:
   scope: Namespaced
   group: crd.projectcalico.org
-  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
   names:
     kind: NetworkPolicy
     plural: networkpolicies
     singular: networkpolicy
+
+---
+
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: bgppeers.crd.projectcalico.org
+spec:
+  scope: Cluster
+  group: crd.projectcalico.org
+  version: v1
+  names:
+    kind: BGPPeer
+    plural: bgppeers
+    singular: bgppeer
