@@ -1,9 +1,9 @@
 apiVersion: v1
 # Version of Calico.
 # Note: Actual images used are updated in values.yaml
-appVersion: "3.3.6"
+appVersion: "3.8.1"
 description: A Helm chart for installing Calico
 name: Calico
 # Matches config version released by AWS under
 # https://github.com/aws/amazon-vpc-cni-k8s/tree/master/config/
-version: 1.4
+version: 1.5.3

@@ -6,11 +6,14 @@
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
-   name: felixconfigurations.crd.projectcalico.org
+  name: felixconfigurations.crd.projectcalico.org
 spec:
   scope: Cluster
   group: crd.projectcalico.org
-  version: v1
+  versions:
+    - name: v1
+      served: true
+      storage: true
   names:
     kind: FelixConfiguration
     plural: felixconfigurations
@@ -21,16 +24,71 @@ spec:
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
+  name: ipamblocks.crd.projectcalico.org
+spec:
+  scope: Cluster
+  group: crd.projectcalico.org
+  versions:
+    - name: v1
+      served: true
+      storage: true
+  names:
+    kind: IPAMBlock
+    plural: ipamblocks
+    singular: ipamblock
+
+---
+
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: blockaffinities.crd.projectcalico.org
+spec:
+  scope: Cluster
+  group: crd.projectcalico.org
+  versions:
+    - name: v1
+      served: true
+      storage: true
+  names:
+    kind: BlockAffinity
+    plural: blockaffinities
+    singular: blockaffinity
+
+---
+
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
   name: bgpconfigurations.crd.projectcalico.org
 spec:
   scope: Cluster
   group: crd.projectcalico.org
-  version: v1
+  versions:
+    - name: v1
+      served: true
+      storage: true
   names:
     kind: BGPConfiguration
     plural: bgpconfigurations
     singular: bgpconfiguration
 
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: bgppeers.crd.projectcalico.org
+spec:
+  scope: Cluster
+  group: crd.projectcalico.org
+  versions:
+    - name: v1
+      served: true
+      storage: true
+  names:
+    kind: BGPPeer
+    plural: bgppeers
+    singular: bgppeer
 ---
 
 apiVersion: apiextensions.k8s.io/v1beta1
@@ -40,7 +98,10 @@ metadata:
 spec:
   scope: Cluster
   group: crd.projectcalico.org
-  version: v1
+  versions:
+    - name: v1
+      served: true
+      storage: true
   names:
     kind: IPPool
     plural: ippools
@@ -56,9 +117,9 @@ spec:
   scope: Cluster
   group: crd.projectcalico.org
   versions:
-  - name: v1
-    served: true
-    storage: true
+    - name: v1
+      served: true
+      storage: true
   names:
     kind: HostEndpoint
     plural: hostendpoints
@@ -92,10 +153,9 @@ spec:
   scope: Cluster
   group: crd.projectcalico.org
   versions:
-  - name: v1
-    served: true
-    storage: true
-
+    - name: v1
+      served: true
+      storage: true
   names:
     kind: GlobalNetworkPolicy
     plural: globalnetworkpolicies
@@ -111,9 +171,9 @@ spec:
   scope: Cluster
   group: crd.projectcalico.org
   versions:
-  - name: v1
-    served: true
-    storage: true
+    - name: v1
+      served: true
+      storage: true
   names:
     kind: GlobalNetworkSet
     plural: globalnetworksets
@@ -129,9 +189,9 @@ spec:
   scope: Namespaced
   group: crd.projectcalico.org
   versions:
-  - name: v1
-    served: true
-    storage: true
+    - name: v1
+      served: true
+      storage: true
   names:
     kind: NetworkPolicy
     plural: networkpolicies
@@ -142,12 +202,17 @@ spec:
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
 metadata:
-  name: bgppeers.crd.projectcalico.org
+  name: networksets.crd.projectcalico.org
 spec:
-  scope: Cluster
+  scope: Namespaced
   group: crd.projectcalico.org
-  version: v1
+  versions:
+    - name: v1
+      served: true
+      storage: true
   names:
-    kind: BGPPeer
-    plural: bgppeers
-    singular: bgppeer
+    kind: NetworkSet
+    plural: networksets
+    singular: networkset
+
+---
