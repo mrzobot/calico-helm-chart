@@ -1,5 +1,5 @@
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: calico-typha
@@ -8,6 +8,9 @@ metadata:
     k8s-app: calico-typha
 spec:
   revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      k8s-app: calico-typha
   template:
     metadata:
       labels:
@@ -55,23 +58,22 @@ spec:
           - name: FELIX_IPTABLESMANGLEALLOWACTION
             value: {{ .Values.env.FELIX_IPTABLESMANGLEALLOWACTION | quote }}
         livenessProbe:
-          exec:
-            command:
-            - calico-typha
-            - check
-            - liveness
+          httpGet:
+            path: /liveness
+            port: 9098
+            host: localhost
           periodSeconds: 30
           initialDelaySeconds: 30
         readinessProbe:
-          exec:
-            command:
-            - calico-typha
-            - check
-            - readiness
+          httpGet:
+            path: /readiness
+            port: 9098
+            host: localhost
           periodSeconds: 10
+
 ---
 
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: calico-typha-horizontal-autoscaler
@@ -79,6 +81,9 @@ metadata:
   labels:
     k8s-app: calico-typha-autoscaler
 spec:
+  selector:
+    matchLabels:
+      k8s-app: calico-typha-autoscaler
   replicas: 1
   template:
     metadata:
